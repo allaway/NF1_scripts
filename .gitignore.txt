@@ -27,7 +27,7 @@
 *.sqlite
 *.maf
 *.maf.txt
-**/data/
+data/
 
 # OS generated files #
 ######################
