@@ -1,7 +1,7 @@
 library(synapseClient)
+library(plyr)
 library(dplyr)
 library(biomaRt)
-library(plyr)
 
 ##pull drug data and filter for human targets, and eliminate drugs with 0 quantitative effects measured
 drugdat<-synTableQuery("SELECT * FROM syn7341038")
