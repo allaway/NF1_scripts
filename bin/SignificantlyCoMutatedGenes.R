@@ -13,71 +13,79 @@ print(cancers)
 mutation.files<-list.files("../data/mutations_by_cancer/")
 mutations<-lapply(mutation.files, function(x) read.table(file = paste("../data/mutations_by_cancer/",x, sep=""), header = TRUE))
 
-comuts<-lapply(1, function(i){
+comuts<-lapply(1:35, function(i){
   ##get samples with NF1 mutation
   nf1<-dplyr::filter(mutations[[i]], gene=="NF1")
   nf1<-nf1[,-1]
   nf1<-as.data.frame(t(nf1))
   nf1$samples<-rownames(nf1)
   nf1<-dplyr::filter(nf1, nf1[,1]==1)
+  
+  if(nrow(nf1)>0){
   cancer.type<-sub("mutations.txt", "", mutation.files[[i]])
   print(cancer.type)
   
-  try({
-  samples.with.nf1.mut<-dplyr::select(mutations[[i]], gene, one_of(nf1$samples))
-  samples.with.nf1.mut<-dplyr::filter(samples.with.nf1.mut, gene!="Unknown")
-  samples.with.nf1.mut$sums<-rowSums(samples.with.nf1.mut[,-1])
-  #samples.with.nf1.mut<-samples.with.nf1.mut[order(-samples.with.nf1.mut$sums),]
-  #samples.with.nf1.mut$gene <- factor(samples.with.nf1.mut$gene, levels = samples.with.nf1.mut$gene)
-  })
   ##get all mutation sums 
   mutations[[i]]$sums<-rowSums(mutations[[i]][,-1])
   
   ##hypergeometric test for each gene
   foo<-lapply(mutations[[i]]$gene, function(j) {
-    try({
     g<-mutations[[i]][j,1]
-    bar<-filter(mutations[[i]], gene == g)
+    bar<-filter(mutations[[i]], gene == paste("\'",g,"\'", sep=""))
     bar2<-filter(mutations[[i]], gene == "NF1")
     bar3<-rbind(bar, bar2)
     bar3<-t(select(bar3, -sums))
     colnames(bar3) <- bar3[1,]
     bar3 <- as.data.frame(bar3[-1,])
 
-    ptswNF1only<-filter(bar3, NF1==1)
-    ptswNF1only<-nrow(filter_(ptswNF1only, paste(g,"==0")))
+    ptswNF1only<-filter(bar3, "NF1"==1)
+    ptswNF1only<-nrow(filter_(ptswNF1only, paste("\'",g,"\'","==0", sep="")))
 
-    ptswJonly<-filter(bar3, NF1==0)
-    ptswJonly<-nrow(filter_(ptswJonly, paste(g,"==1")))
+    ptswGonly<-filter(bar3, "NF1"==0)
+    ptswGonly<-nrow(filter_(ptswGonly, paste("\'",g,"\'","==1", sep="")))
     
-    ptswJandNF1<-filter(bar3, NF1==1)
-    ptswJandNF1<-nrow(filter_(ptswJandNF1, paste(g,"==1")))
+    ptswGandNF1<-filter(bar3, "NF1"==1)
+    ptswGandNF1<-nrow(filter_(ptswGandNF1, paste("\'",g,"\'","==1", sep="")))
     
-    nomut<-filter(bar3, NF1==0)
-    nomut<-nrow(filter_(nomut, paste(g,"==0")))
+    nomut<-filter(bar3, "NF1"==0)
+    nomut<-nrow(filter_(nomut, paste("\'",g,"\'","==0", sep="")))
     
-    f<-fisher.test((matrix(c(ptswJandNF1,ptswNF1only,ptswJonly,nomut), ncol = 2)))
-    
-    bar<-c(f$p.value, f$estimate)
-    bar<-unname(bar)
-    if(is.numeric(bar)){
-    return(bar)
-    } else {
     bar<-c(-1,-1)
-    }
+    f<-fisher.test(matrix(c(ptswGandNF1,ptswNF1only,ptswGonly,nomut), ncol = 2))
+    try(bar<-c(f$p.value, f$estimate))
     
-  } , silent = TRUE) 
+    bar<-unname(bar)
   })
-  
+    
   #comuts<-unname(comuts)
   names(foo) <- mutations[[i]]$gene
   return(foo)
-  #ldply(foo)
+  
+  } else {
+    foo <- "no NF1 mutations"
+    return (foo)
+  }
   
 })
 
 cancer.type<-sub("mutations.txt", "", mutation.files)
-names(muts) <- cancer.type
+names(comuts) <- cancer.type
+
+comuts2<-lapply(names(comuts), function(k){
+  if(nrow(comuts[[k]])>1){
+  foo<-as.data.frame(comuts[[k]])
+  bar<-t(foo)
+  colnames(bar) <- c("p_value", "estimate")
+  bar<-as.data.frame(bar)
+  bar$BH<-p.adjust(bar[,1], method = "BH")
+  return(bar)
+  } else {
+    bar <- "no nf1 mutations"
+    return(bar)
+  }
+})
+
+names(comuts2) <- cancer.type
 
 pancan<-mutations %>%
   Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="gene"), .)
