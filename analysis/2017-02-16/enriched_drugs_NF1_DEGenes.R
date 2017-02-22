@@ -3,6 +3,10 @@ library(plyr)
 library(dplyr)
 library(biomaRt)
 library(mHG)
+library(parallel)
+synapseLogin()
+
+this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-02-16/enriched_drugs_NF1_DEGenes.R"
 
 ## pull drug data and filter for human targets, and eliminate drugs with
 ## 0 quantitative effects measured
@@ -73,8 +77,11 @@ TestForDrugTargets <- function(comut) {
     left_join(hyper.df, compound.data, by = "Structure_ID")
 }
 
+cores<-detectCores()
+print(cores)
+
 ##lapply across all tumor types
-hyper <- lapply(files, function(x) {
+hyper <- mclapply(files, function(x) {
   print(x)
   syn <- synGet(x)
   cancer <- syn@fileHandle$fileName
@@ -90,10 +97,15 @@ hyper <- lapply(files, function(x) {
   cancer_type <- rep(cancer, nrow(hyper.annot))
   hyper.annot <- cbind(hyper.annot, cancer_type)
   
-})
+}, mc.cores = cores)
 
 ##consolidate back into one df, adjust pval for multi corrections, make df with significantly enriched compounds
 hyper.df <- bind_rows(hyper)
 hyper.df$pval_BHadj <- p.adjust(hyper.df$Hypergeo_pval, method = "BH")
-sigs.df <- filter(hyper.df, pval_BHadj < 0.01)
-ids <- count(sigs.df$Structure_ID)
+sigs.df <- filter(hyper.df, pval_BHadj < 0.05)
+#ids <- count(sigs.df$Structure_ID)
+
+write.table(hyper.df, "NF1_TCGA_DEGenes_enriched_drugs.txt", sep = "\t")
+write.table(sigs.df, "NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", sep = "\t")
+synStore(File("NF1_TCGA_DEGenes_enriched_drugs.txt", parentId = 'syn8292685'), used = files, executed = this.file)
+synStore(File("NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", parentId = 'syn8292685'), used = files, executed = this.file)
