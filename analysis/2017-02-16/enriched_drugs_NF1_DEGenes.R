@@ -3,6 +3,7 @@ library(plyr)
 library(dplyr)
 library(biomaRt)
 library(mHG)
+synapseLogin()
 
 ## pull drug data and filter for human targets, and eliminate drugs with
 ## 0 quantitative effects measured
