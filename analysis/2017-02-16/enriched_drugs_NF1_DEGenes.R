@@ -4,12 +4,18 @@ library(dplyr)
 library(biomaRt)
 library(mHG)
 <<<<<<< HEAD
+<<<<<<< HEAD
 synapseLogin()
 =======
+=======
+>>>>>>> origin/master
 library(parallel)
 synapseLogin()
 
 this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-02-16/enriched_drugs_NF1_DEGenes.R"
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 
 ## pull drug data and filter for human targets, and eliminate drugs with
