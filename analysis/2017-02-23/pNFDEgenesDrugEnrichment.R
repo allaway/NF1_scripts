@@ -83,4 +83,6 @@ TestForDrugTargets <- function(comut) {
 testgenes<-unique(sigs$gene)
 
 hyper<-TestForDrugTargets(testgenes)
-
+fac
+write.table(hyper, "pNF_DEG_enriched_drugs.txt", sep = "\t")
+synStore(File("pNF_DEG_enriched_drugs.txt", parentId = "syn8292685"), used = c("syn5734003", "syn7341038", "syn8118065"), executed = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-02-23/pNFDEgenesDrugEnrichment.R")
