@@ -1,4 +1,5 @@
 library(synapseClient)
+library(reshape2)
 library(plyr)
 library(dplyr)
 library(biomaRt)
@@ -6,8 +7,11 @@ library(mHG)
 library(parallel)
 synapseLogin()
 
-this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-02-16/enriched_drugs_NF1_DEGenes.R"
+degs<-read.table(synGet("syn5734003")@filePath, sep = ",", header = TRUE)
+degs2<-colsplit(degs$target_id, "\\|", c(1,2,3,4,5,"gene",7,8))
+degs$gene<-degs2$gene
 
+sigs<-filter(degs, pval<=0.001 & b >= 0)
 
 ## pull drug data and filter for human targets, and eliminate drugs with
 ## 0 quantitative effects measured
@@ -54,19 +58,17 @@ drugdat.stringent <-
 listofdrugtargets.stri <-
   dlply(.data = drugdat.stringent, .variables = "Structure_ID")
 
-##get NF1 DEgene filenames
-files <-
-  synQuery("SELECT * from file WHERE parentId=='syn8267685'")$file.id
+print(detectCores())
 
 ## core function to test for enriched drug targets (hypergeometric test)
 TestForDrugTargets <- function(comut) {
   allcomuts <- unique(comut)
-  hyper <- lapply(listofdrugtargets.stri, function(x) {
+  hyper <- mclapply(listofdrugtargets.stri, function(x) {
     N <- length(allcomuts)
     B <- nrow(x$Hugo_Gene)
     lambdas <- as.integer((allcomuts %in% x$Hugo_Gene))
     mHG <- mHG.test(lambdas)$p.value
-  })
+  }, mc.cores=detectCores())
   
   Structure_ID <- names(listofdrugtargets.stri)
   hypergeo_pval <- t(bind_rows(hyper))
@@ -78,35 +80,7 @@ TestForDrugTargets <- function(comut) {
     left_join(hyper.df, compound.data, by = "Structure_ID")
 }
 
-cores<-detectCores()
-print(cores)
+testgenes<-unique(sigs$gene)
 
-##lapply across all tumor types
-hyper <- mclapply(files, function(x) {
-  print(x)
-  syn <- synGet(x)
-  cancer <- syn@fileHandle$fileName
-  cancer <- sub("TCGA_", "", cancer)
-  cancer <- sub("_NF1_DEgenes.csv", "", cancer)
-  
-  DEgenes <- read.table(syn@filePath, sep = ",", header = TRUE)
-  DEgenes$Gene <- rownames(DEgenes)
-  incr.in.NF1 <- filter(DEgenes, logFC < -0.1 & adj.P.Val < 0.1)
-  sort.gene <- arrange(DEgenes, logFC)
-  
-  hyper.annot <- TestForDrugTargets(sort.gene$Gene)
-  cancer_type <- rep(cancer, nrow(hyper.annot))
-  hyper.annot <- cbind(hyper.annot, cancer_type)
-  
-}, mc.cores = cores)
+hyper<-TestForDrugTargets(testgenes)
 
-##consolidate back into one df, adjust pval for multi corrections, make df with significantly enriched compounds
-hyper.df <- bind_rows(hyper)
-hyper.df$pval_BHadj <- p.adjust(hyper.df$Hypergeo_pval, method = "BH")
-sigs.df <- filter(hyper.df, pval_BHadj < 0.05)
-#ids <- count(sigs.df$Structure_ID)
-
-write.table(hyper.df, "NF1_TCGA_DEGenes_enriched_drugs.txt", sep = "\t")
-write.table(sigs.df, "NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", sep = "\t")
-synStore(File("NF1_TCGA_DEGenes_enriched_drugs.txt", parentId = 'syn8292685'), used = files, executed = this.file)
-synStore(File("NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", parentId = 'syn8292685'), used = files, executed = this.file)

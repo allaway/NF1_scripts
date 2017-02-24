@@ -5,11 +5,12 @@ library(rJava)
 library(rcdk)
 synapseLogin()
 library(pheatmap)
+library(viridis)
 
 ###NF1 TCGA DEGene Drug Hits 
 x<-synGet("syn8295452")@filePath
 data<-read.table(x)
-sigs<-filter(data, Hypergeo_pval<=0.05)
+sigs<-filter(data, Hypergeo_pval<=0.0005)
 sig.data<-select(sigs, Structure_ID, Original_molecule_SMILES, Supplier_Data_1,Supplier_Data_2,Supplier_Data_3)
 sig.data<-distinct(sig.data)
 
@@ -50,3 +51,4 @@ pheatmap(fp.sim, border_color = NA, color = magma(n = 10000))
 
 clust<-hclust(as.dist(fp.dist))
 plot(clust)
+

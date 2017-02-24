@@ -5,7 +5,7 @@ library(synapseClient)
 library(ggplot2)
 synapseLogin()
 
-this.file = ""
+this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-02-23/PlotSigDEGenesTCGANF1.R"
 
 files <-
   synQuery("SELECT * from file WHERE parentId=='syn8267685'")$file.id
@@ -26,7 +26,7 @@ for(i in files){
     labs(title = paste("NF1 DEgenes in ", cancer, " (NF1 wt vs NF1 mut)", sep = ""), x = "Log10(FC)", y = "-log10(p-val)") +
     theme(plot.title=element_text(hjust=0.5)) +
     guides(color = "none")
-  ggsave(paste("sig_NF1_DE_genes_in_",cancer,"_TCGA.png", sep = ""), plot = last_plot(), width = 7, height = 5.5) 
+  ggsave(paste("sig_NF1_DE_genes_in_",cancer,"_TCGA.png", sep = ""), plot = last_plot(), width = 7, height = 7) 
   synStore(File(paste("sig_NF1_DE_genes_in_",cancer,"_TCGA.png", sep = ""),parentId = "syn8314098"), used = i, executed = this.file) 
 
 }
