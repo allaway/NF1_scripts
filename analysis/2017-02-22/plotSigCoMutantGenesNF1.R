@@ -17,8 +17,6 @@ mutations<-lapply(mutation.files, function(x) read.table(file = paste("../../dat
 cancer.type<-sub("mutations.txt", "", mutation.files)
 names(mutations) <- cancer.type
 
-
-library(wesanderson)
 library(viridis)
 
 ##get filenames for 
@@ -41,19 +39,30 @@ for(i in files){
     
     if(length(dat$gene)>30){
       dat<-arrange(dat, desc(sums))
+        write.table(dat, paste("sig_NF1_co_mutant_genes_in_",cancer,"_TCGA.txt", sep = ""))
       dat<-slice(dat, 1:30)
     }
     virid <- rev(viridis(n = nrow(dat)))
-    ggplot(data = dat, aes(x=gene, y=sums)) +
-      geom_bar(stat = "identity", color = "darkgray", fill = virid) +
-      theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
-      labs(title = paste("NF1 co-mutated genes in ", cancer, " (corr. p<0.1, top 30)", sep = ""), x = "Gene", y = "Comutation Frequency") +
-      theme(plot.title=element_text(hjust=0.5))
-    ggsave(paste("sig_NF1_co_mutant_genes_in_",cancer,"_TCGA.png", sep = ""), plot = last_plot(), width = 7, height = 5.5) 
-    synStore(File(paste("sig_NF1_co_mutant_genes_in_",cancer,"_TCGA.png", sep = ""),parentId = "syn8304189"), used = i, executed = this.file) 
+    #ggplot(data = dat, aes(x=gene, y=sums)) +
+    #  geom_bar(stat = "identity", color = "darkgray", fill = virid) +
+    #  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+    #  labs(title = paste("NF1 co-mutated genes in ", cancer, " (corr. p<0.1, top 30)", sep = ""), x = "Gene", y = "Comutation Frequency") +
+    #  theme(plot.title=element_text(hjust=0.5))
+    #ggsave(paste("sig_NF1_co_mutant_genes_in_",cancer,"_TCGA.png", sep = ""), plot = last_plot(), width = 7, height = 5.5) 
+    #synStore(File(paste("sig_NF1_co_mutant_genes_in_",cancer,"_TCGA.png", sep = ""),parentId = "syn8304189"), used = i, executed = this.file) 
+    
     } else {
       print("no sig comuts") 
     }
     
     }
 
+mutfiles<-list.files(path = "comut")
+
+#pancancer
+for(i in files) {
+  x<-read.table()
+}
+
+dat<-filter(mutations[[cancer]], gene %in% list)
+dat<-select(dat, gene, one_of(mutpts))

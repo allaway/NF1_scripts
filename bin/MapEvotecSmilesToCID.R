@@ -34,12 +34,15 @@ names(allids)<-c("Original_molecule_SMILES", "CID", "CSID")
 test<-full_join(allids,x)
 
 write.table(test, "cid_csid_map.txt", sep = "\t")
+synStore(File("cid_csid_map.txt", parentId = "syn7287882"))
 
-_##map smiles to 'names' using above resource
+##map smiles to 'names' using above resource
 write.table(as.data.frame(test$CID), "forsynonyms.txt", sep = "\t", quote = FALSE, col.names = FALSE, row.names = FALSE)
 synonyms<-read.table(synGet("syn8361358")@filePath, quote=NULL, comment='', sep = "\t")
 
 cidcts<-sapply(allids$CSID, function(k){
   pic_prop(k, properties = "names", first = TRUE)
 })
- b
+ 
+
+

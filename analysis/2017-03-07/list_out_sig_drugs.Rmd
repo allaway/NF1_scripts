@@ -1,0 +1,198 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r, include=FALSE}
+library(synapseClient)
+library(plyr)
+library(dplyr)
+library(pander)
+synapseLogin()
+
+foo<-read.table(synGet("syn8295452")@filePath)
+```
+
+  
+```{r, echo=FALSE}
+  foo2<-filter(foo, Hypergeo_pval<=0.01)
+  foo2<-select(foo2, Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_1, Supplier_Data_2, Supplier_Data_3, cancer_type)
+  foo2<-arrange(foo2, Hypergeo_pval)
+  foo2<-as.data.frame(apply(foo2, 1:2, function(x) strtrim(x, 40)))
+  foo2<-dlply(foo2, .variable = "cancer_type")
+```
+```{r, echo=FALSE}
+ i<-"ACC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"BLCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"BRCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"CESC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"DLBC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"ESCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"GBM"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"GBMLGG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"HNSC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KICH"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIPAN"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIRC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIRP"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LAML"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LGG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LIHC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LUAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LUSC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"OV"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PAAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PCPG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PRAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"SARC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"SKCM"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"STAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"STES"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"TGCT"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"THCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"UCS"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Molname, Supplier_Data_2)
+ print(i)
+ pander(bar)
+```

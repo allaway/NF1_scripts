@@ -1,0 +1,240 @@
+---
+title: "NF1 DEGene enriched drugs by Cancer"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+  tables: yes
+---
+
+```{r, include=FALSE}
+library(synapseClient)
+library(plyr)
+library(dplyr)
+library(pander)
+synapseLogin()
+
+foo<-read.table(synGet("syn8295452")@filePath)
+bar<-read.table(synGet("syn8390235")@filePath)
+names(bar) <- c("Original_molecule_SMILES", "molecule_name")
+```
+
+  
+```{r, include=FALSE}
+  foo2<-filter(foo, Hypergeo_pval<=0.05)
+  foo2<-select(foo2, Structure_ID, Original_molecule_SMILES, Hypergeo_pval, Supplier, Supplier_ID, Supplier_Data_2, cancer_type)
+  foo2<-arrange(foo2, Hypergeo_pval)
+  foo2<-left_join(foo2, bar)
+  pan<-foo2
+  foo2<-dlply(foo2, .variable = "cancer_type")
+```
+
+```{r, echo=FALSE}
+pancan <- select(pan, Structure_ID, Supplier_Data_2, molecule_name)  
+pancan <- distinct(pancan)
+pancan <- slice(pancan, 1:50)
+pancan$pancan<-pancan$Structure_ID %in% pancan$Structure_ID
+pancan$GBM <- pancan$Structure_ID %in% foo2$GBM$Structure_ID
+pancan$LGG <- pancan$Structure_ID %in% foo2$LGG$Structure_ID
+pancan$SKCM <- pancan$Structure_ID %in% foo2$SKCM$Structure_ID
+pancan$LUAD <- pancan$Structure_ID %in% foo2$LUAD$Structure_ID
+pancan[pancan==FALSE] <- NA
+pancan[pancan==TRUE] <- 'x'
+names(pancan) <- c("Structure ID", "Partial Target List", "Molecule ID", "Pancan", "GBM", "LGG", "SKCM", "LUAD")
+pander(pancan, split.table=Inf)
+write.table(pancan, "Sig_Drugs_NF1_TCGA_DEGenes.txt", sep = "\t")
+```
+
+```{r}
+mipes <- filter(pan, Supplier == "MIPE")
+mipes <- select(mipes, Structure_ID, Supplier_Data_2, molecule_name, Supplier_ID)  
+mipes <- distinct(mipes)
+mipes <- slice(mipes, 1:50)
+mipes$pancan <- mipes$Structure_ID %in% pancan$Structure_ID
+mipes$GBM <- mipes$Structure_ID %in% foo2$GBM$Structure_ID
+mipes$LGG <- mipes$Structure_ID %in% foo2$LGG$Structure_ID
+mipes$SKCM <- mipes$Structure_ID %in% foo2$SKCM$Structure_ID
+mipes$LUAD <- mipes$Structure_ID %in% foo2$LUAD$Structure_ID
+mipes[mipes==FALSE] <- NA
+mipes[mipes==TRUE] <- 'x'
+names(mipes) <- c("Structure ID", "Partial Target List", "Molecule ID", "MIPES ID", "Pancan", "GBM", "LGG", "SKCM", "LUAD")
+
+pander(mipes, split.table=Inf)
+write.table(mipes, "MIPES_Sig_Drugs_NF1_TCGA_DEGenes.txt", sep = "\t")
+
+```
+
+```{r, echo=FALSE}
+ i<-"ACC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"BLCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"BRCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"CESC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"DLBC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"ESCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"GBM"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"GBMLGG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"HNSC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KICH"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIPAN"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIRC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"KIRP"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LAML"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LGG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LIHC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LUAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"LUSC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"OV"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PAAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PCPG"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"PRAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"SARC"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"SKCM"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"STAD"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"STES"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"TGCT"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"THCA"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
+```{r, echo=FALSE}
+ i<-"UCS"
+  bar<-select(foo2[[i]], Structure_ID, Hypergeo_pval, molecule_name)
+ print(i)
+ pander(bar)
+```
