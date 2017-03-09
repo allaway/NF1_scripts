@@ -107,6 +107,4 @@ sigs.df <- filter(hyper.df, pval_BHadj < 0.05)
 #ids <- count(sigs.df$Structure_ID)
 
 write.table(hyper.df, "NF1_TCGA_DEGenes_enriched_drugs.txt", sep = "\t")
-write.table(sigs.df, "NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", sep = "\t")
 synStore(File("NF1_TCGA_DEGenes_enriched_drugs.txt", parentId = 'syn8292685'), used = files, executed = this.file)
-synStore(File("NF1_TCGA_DEGenes_enriched_drugs_BH05.txt", parentId = 'syn8292685'), used = files, executed = this.file)
