@@ -4,7 +4,7 @@ library(dplyr)
 library(Matrix)
 library(pheatmap)
 
-this.file = ""
+this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-03-09/PlotNF1DEGeneDrugTargets.R"
 
 de.drugs<-read.table(synGet("syn8295452")@filePath, na.strings=c("", "NA")) 
 de.drugs <- de.drugs %>% filter(Hypergeo_pval<=0.01)
@@ -49,6 +49,8 @@ for(i in cancers){
     geom_bar(stat="identity") +
     scale_x_discrete(limits = bar$gene) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1))
+  ggsave(paste("top_50_targets_in_", i, ".png", sep = ""))
+  synStore(File(paste("top_50_targets_in_", i, ".png", sep = ""), parentId = "syn8404515"), used = c("syn8295452", "syn7341038"), executed=this.file)
 }
 
 ##generate heatmap to cluster molecules for cancers
@@ -58,10 +60,12 @@ for(i in cancers){
   idx<-cbind(foo$Structure_ID, as.numeric(as.factor(foo$Structure_ID)), as.data.frame(foo$Hugo_Gene), as.numeric(as.factor(foo$Hugo_Gene)))
   colnames(idx) <- c("Structure_ID", "i", "Hugo_Gene", "j")
   mat <- 1*as.matrix(sparseMatrix(i = idx$i, j = idx$j, dimnames = list(unique(idx$Structure_ID), (unique(idx$Hugo_Gene[order(idx$Hugo_Gene)])))))
-  png(paste("compound_relationship_heatmap_DEgenes_,",i,".png"))
+  mat2<-as.matrix(sparseMatrix(i = idx$i, j = idx$j, dimnames = list(unique(idx$Structure_ID), (unique(idx$Hugo_Gene[order(idx$Hugo_Gene)])))))
+  image(mat2)
+  png(paste("compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""))
   pheatmap(mat)
   dev.off()
-  synStore(File(paste("compound_relationship_heatmap_DEgenes_,",i,".png"), parentId = "syn8327212"), used = c("syn8295452", "syn7341038"), executed=this.file)
+  synStore(File(paste("compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""), parentId = "syn8404515"), used = c("syn8295452", "syn7341038"), executed=this.file)
 }
 
 
