@@ -33,7 +33,7 @@
 *.maf
 *.maf.txt
 data/
-analysis/*/*.txt
+analysis/2017-02-22/comut/*.txt
 
 # OS generated files #
 ######################
@@ -45,3 +45,13 @@ analysis/*/*.txt
 ehthumbs.db
 Thumbs.db
 analysis/2017-02-23/smilestest.txt
+
+analysis/2017-02-22/comut/sig_NF1_co_mutant_genes_in_UCS_TCGA.txt
+
+3437184116000019876.txt
+
+*.html
+*.pdf
+*.Rhistory
+analysis/2017-03-07/*.txt
+
