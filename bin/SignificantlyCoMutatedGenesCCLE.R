@@ -5,17 +5,11 @@ library(parallel)
 
 synapseLogin()
 
-this.file= "x"
+this.file= "https://raw.githubusercontent.com/allaway/NF1_scripts/master/bin/SignificantlyCoMutatedGenesCCLE.R"
 
 mutations<-read.table(synGet("syn7466552")@filePath)
 gene<-rownames(mutations)
 mutations<-cbind(gene, mutations)
-#nf1muts<-as.data.frame(t(filter(nf1muts, gene == "NF1")))
-#nf1muts$samps<-rownames(nf1muts)
-#nf1muts<-filter(nf1muts, V1 == "1")$samps
-
-#nf1mut<-select(mutations, one_of(nf1muts))
-#nf1wts<-select(mutations, -one_of(nf1muts))
 
 nf1<-dplyr::filter(mutations, gene=="NF1")
 nf1<-nf1[,-1]
@@ -63,5 +57,5 @@ names(foo) <- gene
 comuts2 <- ldply(foo)
 colnames(comuts2) <- c("gene","p_value","estimate")
 
-write.table(bar, file = paste(./"data/TCGA_Comuts/",q,"_NF1_comut_TCGA_005.txt",sep=""), sep = "\t")
-synStore(File(paste("../data/TCGA_Comuts/",q,"_NF1_comut_TCGA_005.txt",sep=""), parentId="syn8299578"), executed = this.file)  
+write.table(comuts2, file = paste("../data/CCLE_NF1_comut.txt",sep=""), sep = "\t")
+synStore(File(paste("../data/CCLE_NF1_comut.txt",sep=""), parentId="syn8495175"), executed = this.file, used = c("syn7466552"))  
