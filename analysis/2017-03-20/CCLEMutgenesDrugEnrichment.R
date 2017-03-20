@@ -7,7 +7,7 @@ library(mHG)
 library(parallel)
 synapseLogin()
 
-this.file = ""
+this.file = "https://raw.githubusercontent.com/allaway/NF1_scripts/master/analysis/2017-03-20/CCLEMutgenesDrugEnrichment.R"
 
 mutations<-read.table(synGet("syn7466552")@filePath)
 gene<-rownames(mutations)
@@ -91,7 +91,20 @@ TestForDrugTargets <- function(comut) {
 }
 
 testgenes<-unique(nf1mut$gene)
+
 hyper<-TestForDrugTargets(testgenes)
 
 write.table(hyper, "CCLE_mutation_enriched_drugs.txt", sep = "\t")
-synStore(File("CCLE_mutation_enriched_drugs.txt", parentId = "syn8496331"), used = c("syn7466552", "syn7341038", "syn8118065"), executed = this.file)
+synStore(File("CCLE_mutation_enriched_drugs.txt", parentId = "syn8496331"), used = c("syn7466552","syn7341038", "syn8118065"), executed = this.file)
+
+
+##try again with mHG NF1 comuts - different list - ranked by hypergeo pva
+mutations<-read.table(synGet("syn8495196")@filePath) %>%
+  arrange(p_value)
+testgenes<-unique(mutations$gene)
+hyper<-TestForDrugTargets(testgenes)
+
+write.table(hyper, "CCLE_SIGmutation_enriched_drugs.txt", sep = "\t")
+synStore(File("CCLE_SIGmutation_enriched_drugs.txt", parentId = "syn8496331"), used = c("syn8495196","syn7341038", "syn8118065"), executed = this.file)
+
+

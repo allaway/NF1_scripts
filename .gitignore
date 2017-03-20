@@ -33,6 +33,7 @@
 *.maf
 *.maf.txt
 data/
+analysis/*/*.txt
 
 # OS generated files #
 ######################
