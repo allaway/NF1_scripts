@@ -2,7 +2,6 @@ library(plyr)
 library(dplyr)
 library(reshape2)
 library(synapseClient)
-library(ggplot2)
 library(parallel)
 
 synapseLogin()
