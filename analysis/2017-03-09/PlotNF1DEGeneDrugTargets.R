@@ -72,7 +72,7 @@ for(i in cancers){
 ##generate heatmap to cluster molecules for cancers, adjusted by logFC of each gene
 files <-
   synQuery("SELECT * from file WHERE parentId=='syn8267685'")$file.id
-
+x <- "syn8269290"
 for(x in files){
   print(x)
   syn <- synGet(x)
@@ -96,11 +96,17 @@ for(x in files){
   mat<-as.matrix(mat)
   #mat2<-as.matrix(sparseMatrix(i = idx$i, j = idx$j, dimnames = list(unique(idx$Structure_ID), (unique(idx$Hugo_Gene[order(idx$Hugo_Gene)])))))
   #image(mat2)
-  png(paste("LogFC_adjusted_compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""))
-  pheatmap(mat)
-  dev.off()
-  synStore(File(paste("LogFC_adjusted_compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""), parentId = "syn8404515"), used = c("syn8295452", "syn7341038", syn), executed=this.file)
+  #png(paste("LogFC_adjusted_compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""))
+  res<-pheatmap(mat)
+  res
+  #dev.off()
+  #synStore(File(paste("LogFC_adjusted_compound_relationship_heatmap_DEgenes_,",i,".png", sep = ""), parentId = "syn8404515"), used = c("syn8295452", "syn7341038", syn), executed=this.file)
+  
+  clust.r<- cutree(res$tree_row, k=10)
+  clust.c<- cutree(res$tree_col, k=10)
+  clust.r
+  clust.c
 }
 
-
+ 
 
